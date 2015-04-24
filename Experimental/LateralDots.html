@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+</head>
+<body>
+
+<body class="it">
+
+<!--<div class="masthead">What is this?</div>-->
+<!--<div>Is this some kind of a joke?</div>-->
+
+<!--<div class="bar"></div>-->
+
+<script type="text/javascript">
+    var randomData = [27, 30, 37, 67, 49, 42, 76, 2, 24, 3, 25, 11, 10, 40, 3, 32, 10, 20, 55, 35, 31, 14, 5, 76, 70];
+    var someMoreRandomData = [3, 1, 56, 21, 11, 21, 75, 24, 73, 16, 49, 49, 74, 55, 80, 78, 10, 57, 3, 40, 95, 39, 97, 26, 24];
+    var reallyRandomData = [];
+    var random2dArray = [];
+
+    var myLandParams = {"width": 500
+        , "height": 500
+        , "margins": 50};
+
+    var buildRandom2dArray = function() {
+
+        reallyRandomData = [];
+
+        for (var i = 1; i <= 25; i ++) {
+            reallyRandomData.push(Math.random() * 500);
+        }
+
+        var x = [];
+
+        for (i = 0; i <= 24; i++) {
+            x[i] = [randomData[i], reallyRandomData[i]];
+        }
+
+//        console.log(reallyRandomData);
+//        console.log(x);
+
+        return x;
+    }
+
+    //    var randomBars = d3.select("body").selectAll("div")
+//            .data(reallyRandomData)
+//            .enter()
+//            .append("div")
+//            .attr("class", "bar")
+//            .style("height", function(d) {return d * 4 + "px";});
+
+    var myLand = d3.select("body")
+            .append("svg")
+            .attr("width", 1000)
+            .attr("height", myLandParams.height);
+
+
+    random2dArray = buildRandom2dArray();
+
+    var yScale = d3.scale.linear()
+            .domain([0, d3.max(random2dArray, function(d) { return d[1]; })])
+            .range([0, (myLandParams.height)]);
+
+/*
+    var verticals = myLand.selectAll("rect")
+            .data(randomData)
+            .enter()
+            .append("rect")
+            .attr("x", function(d) { return d * 8; } )
+            .attr("y", 0)
+            .attr("height", yScale(myLandParams.height))
+            .attr("width", 1)
+            .attr("fill", "gray");
+*/
+
+    var randomDots = myLand.selectAll("circle")
+            .data(random2dArray)
+            .enter()
+            .append("circle")
+            .attr("r", 10)
+            .attr("cx", function(d) { return d[0] * 8; } )
+            .attr("cy", function(d) { return yScale(d[1]); } )
+            .attr("fill", "#229cdc")
+            .on('click', function(d,i){
+                random2dArray = buildRandom2dArray();
+
+                var yScale = d3.scale.linear()
+                        .domain([d3.min(random2dArray, function(d) { return d[1]; }), d3.max(random2dArray, function(d) { return d[1]; })])
+                        .range([0, (myLandParams.height - myLandParams.margins)]);
+
+                console.log(reallyRandomData);
+
+                console.log(reallyRandomData,d3.max(random2dArray, function(d) { return d[1]; }) );
+
+                myLand.selectAll("circle")
+                        .data(random2dArray)
+                        .transition().duration(1000)//.ease("elastic")
+                        .attr("cy", function(d) { return yScale(d[1]); });
+            });
+
+    var yAxis = d3.svg.axis()
+            .scale(yScale)
+            .orient("left");
+
+    myLand.append("g")
+            .attr("class", "axis")
+            .call(yAxis);
+
+
+</script>
+</body>
+</html>
+
+<style>
+    div.bar{
+        display: inline-block;
+        font-size: 60px;
+        font-family: fantasy;
+        text-align: center;
+        width: 20px;
+        height: 100px;
+        background-color: #229cdc;
+        margin-right: 8px;
+    }
+    div.masthead {
+        background-color: #229cdc;
+        font-size: 90px;
+    }
+    svg {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+    }
+
+    .axis text {
+        font-family: sans-serif;
+        font-size: 11px;
+    }
+</style>

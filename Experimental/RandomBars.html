@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<script type="application/javascript">
+
+    var anArray = [];
+
+    for (i in d3.range((1, 20))) {
+        anArray[i] = d3.round(Math.random() * 200);
+    }
+
+    var w = 900;
+    var h = 300;
+
+    var myLand = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+    var xScale = d3.scale.ordinal()
+            .domain(d3.range(anArray.length))
+            .rangeRoundBands([0, w], 0.2);
+
+    var colorScale = d3.scale.linear()
+            .domain([0,200])
+            .range(["#6c7d95","#0a274f"]);
+
+
+
+    var text = myLand.selectAll("text")
+            .data(anArray)
+            .enter()
+            .append("text")
+            .attr("class", "labels")
+            .text(function(d) { return d; })
+            .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; } )
+            .attr("y", function(d) { return h - d - 40; });
+
+    var bars = myLand.selectAll("rect")
+            .data(anArray)
+            .enter()
+            .append("rect")
+            .attr("class", "bars")
+            .attr("x", function(d, i) { return xScale(i); } )
+            .attr("y", function(d) { return h - d - 30; })
+            .attr("width", xScale.rangeBand())
+            .attr("height", function(d) { return d; })
+            .attr("fill", function(d) {
+                if (d < 10) {
+                    return "red";
+                }
+                else if (d < 50) {
+                    return "green";
+                }
+                else {
+                    return colorScale(d);
+                }});
+
+        var updateData = function(d, i) {
+                for (i in d3.range((1, 20))) {
+                    anArray[i] = d3.round(Math.random() * 200);
+                }
+
+                console.log(anArray);
+
+                myLand.selectAll(".bars")
+                        .data(anArray)
+                        .transition().delay(function(d, i) { console.log(i); return i * 25; })
+                        .attr("x", function(d, i) { return xScale(i); } )
+                        .attr("y", function(d) { return h - 0 - 30; })
+                        .attr("height", function(d) { return 0; })
+                        .attr("fill", function(d) {
+                            if (d < 10) {
+                                return "red";
+                            }
+                            else if (d < 50) {
+                                return "green";
+                            }
+                            else {
+                                return colorScale(d);
+                            }});
+
+                myLand.selectAll(".labels")
+                        .data(anArray)
+                        .transition().delay(function(d, i) { console.log(i); return i * 25; })
+                        .attr("opacity", 0)
+                        .attr("y", function(d) { return h; });
+
+                myLand.selectAll(".bars")
+                        .data(anArray)
+                        .transition().delay(function(d, i) { console.log(i); return 500 + i * 25; })
+                        .attr("x", function(d, i) { return xScale(i); } )
+                        .attr("y", function(d) { return h - d - 30; })
+                        .attr("height", function(d) { return d; })
+                        .attr("fill", function(d) {
+                            if (d < 10) {
+                                return "red";
+                            }
+                            else if (d < 50) {
+                                return "green";
+                            }
+                            else {
+                                return colorScale(d);
+                            }});
+
+
+
+                myLand.selectAll(".labels")
+                        .data(anArray)
+                        .transition().delay(function(d, i) { console.log(i); return 500 + i * 25; })
+                        .attr("opacity", 1)
+                        .text(function(d) { return d; })
+                        .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; } )
+                        .attr("y", function(d) { return h - d - 40; });
+                };
+
+
+
+
+//    var blocks = myLand.selectAll("blocks")
+//            .data(anArray)
+//            .enter()
+//            .append("rect")
+//            .attr("class", "blocks")
+//            .text(function(d) { return d; })
+//            .attr("x", function(d, i) { return xScale(i); } )
+//            .attr("y", function(d) { return h - 24; })
+//            .attr("width", xScale.rangeBand())
+//            .attr("height", 30);
+
+
+    var botton = d3.select("body")
+            .append("div")
+            .attr("class", "myButton")
+            .attr("onClick", "updateData()")
+            .attr("width", w)
+            .text("Click here to randomize data.");
+
+</script>
+
+</div>
+</body>
+<style>
+    text {
+        font-size: 18px;
+        font-family: consolas, sans-serif;
+        font-weight: 400;
+        align-items: center;
+        text-anchor: middle;
+        fill: black;
+    }
+
+    .myButton {
+        background-color:#0a274f;
+        -moz-border-radius:28px;
+        -webkit-border-radius:28px;
+        border-radius:28px;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Roboto;
+        font-size:17px;
+        padding:16px 31px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #2f6627;
+        margin-left:auto;
+        margin-right:auto;
+    }
+    .myButton:hover {
+        background-color: green;
+    }
+    .myButton:active {
+        position:relative;
+        top:1px;
+    }
+
+    svg, div.myButton {
+        display:table-cell;
+        vertical-align:middle;
+        margin-left:auto;
+        margin-right:auto;
+    }
+
+</style>
+
+</html>
